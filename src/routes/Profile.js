@@ -8,9 +8,13 @@ const Profile = ({ userObj, refreshUser }) => {
 
     const onLogOutClick = () => {
         //LogOut
-        authService.signOut();
+        // authService.signOut();
+        sessionStorage.removeItem("Id");
+        sessionStorage.removeItem("Password");
+        
         //초기화면으로 이동
         history("/");
+        window.location.reload();
     };
 
     // DisplatName 설정

@@ -3,7 +3,7 @@ from sqlalchemy.orm import sessionmaker
 
 class engineconn:
 
-    DB_URL = 'mysql+pymysql://root:rootq1!@localhost:3306/nwitter?charset=utf8'
+    DB_URL = 'mysql+pymysql://root:qwer1234@localhost:3306/nwitter?charset=utf8'
 
     def __init__(self):
         self.engine = create_engine(self.DB_URL, pool_recycle = 500)

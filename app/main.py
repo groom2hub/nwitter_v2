@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, Path, HTTPException
 from pydantic import BaseModel
 from database import engineconn
-from model import Usertbl
+from model import Usertbl, Nweettbl
 
 from fastapi.middleware.cors import CORSMiddleware # NO CORS
 
@@ -34,6 +34,21 @@ async def first_get():
 async def curUser_get(currentUserId):
     example = session.query(Usertbl).filter_by(user_id=currentUserId).first()
     return example
+
+@app.get("/addnweet/{text}/{creatorId}/{displayName}")
+async def add_nweet(text, creatorId, displayName):
+    try:
+        new_nweet = Nweettbl(nweet_text=text, user_id=creatorId, user_displayname=displayName)
+        session.add(new_nweet)
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        raise
+        return False
+    finally:
+        session.close()
+        return False
 
 # Login
 @app.get("/login/{id}/{password}")

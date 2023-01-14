@@ -1,8 +1,5 @@
 import { useState } from "react";
-import { dbService, storageService } from "../fbase.js";
 import { v4 as uuidv4 } from "uuid";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
-import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 
@@ -25,16 +22,12 @@ const NweetFactory = ({ userObj }) => {
         //   attachmentUrl = await getDownloadURL(attachmentRef).then(response);
         // }
         // nweetObj
+        
+        const text = nweet
+        const creatorId = userObj.uid
+        const displayName = userObj.displayName
+        const response = await fetch(`http://localhost:8000/addnweet/${text}/${creatorId}/${displayName}`);
 
-        // const response = await fetch(`http://localhost:8000/addnweet/${text}/${}`);
-        const docRef = await addDoc(collection(dbService, "nweets"), {
-          text: nweet,
-          createdAt: serverTimestamp(),
-          creatorId: userObj.uid,
-        //   attachmentUrl,
-          displayName: userObj.displayName,
-          likeIt,
-        });
         setNweet("");
         // setAttachment("");
     };

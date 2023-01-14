@@ -17,6 +17,7 @@ class Nweettbl(Base):
     nweet_num = Column(INT, nullable=False, primary_key=True, autoincrement=True)
     nweet_text = Column(TEXT, nullable=False)
     user_id = Column(TEXT, nullable=False)
+    user_displayname = Column(TEXT, nullable=True)
     created_at = Column(DATETIME, default=datetime.datetime.utcnow)
     attachment_url = Column(TEXT, nullable=True)
     like_it = Column(INT, default=0)

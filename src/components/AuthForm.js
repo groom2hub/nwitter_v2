@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 const AuthForm = () => {
+    const [reload, setReload] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [newAccount, setNewAccount] = useState(true);
@@ -28,8 +29,15 @@ const AuthForm = () => {
             } else {
                 // log in
                 data = await fetch(`http://localhost:8000/login/${email}/${password}`);
-                sessionStorage.setItem("Id", email);
-                sessionStorage.setItem("Password", password);
+                data = await data.json();
+                if(String(data) === 'true'){
+                    sessionStorage.setItem("Id", email);
+                    sessionStorage.setItem("Password", password);
+                    window.location.reload();
+                }
+                else {
+                    console.log("Login Fail")
+                }
             }
         } catch (error) {
             setError(error.message);
