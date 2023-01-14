@@ -28,9 +28,12 @@ const Profile = ({ userObj, refreshUser }) => {
     // Update profile
     const onSubmit = async (event) => {
         event.preventDefault();
+
         if(userObj.displayName !== newDisplayName) {
-            await userObj.updateProfile({ displayName: newDisplayName });
+            await fetch(`http://localhost:8000/updatedisplayname/${userObj.uid}/${newDisplayName}`);
             refreshUser();
+            setNewDisplayName(newDisplayName)
+            window.location.reload();
         }
     }
 

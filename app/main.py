@@ -35,6 +35,19 @@ async def curUser_get(currentUserId):
     example = session.query(Usertbl).filter_by(user_id=currentUserId).first()
     return example
 
+@app.get("/updatedisplayname/{currentUserId}/{displayname}")
+async def updatedisplayname(currentUserId, displayname):
+    try:
+        session.query(Usertbl).filter_by(user_id = currentUserId).update({Usertbl.user_displayname: displayname})
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        raise
+        return False
+    finally:
+        session.close()
+
 @app.get("/nweettbl")
 async def first_get():
     example = session.query(Nweettbl).all()

@@ -11,9 +11,6 @@ const Nweet = ({ nweetObj, isOwner }) => {
     const [newNweet, setNewNweet] = useState(nweetObj.nweet_text);
     const [likeIt, setLikeIt] = useState(nweetObj.like_it);
 
-    console.log("nweetObj", nweetObj)
-    console.log("isOwner", isOwner)
-
     // Delete Nweet, attachment
     const onDeleteClick = async () => {
         const ok = window.confirm("삭제하시겠습니까?");
