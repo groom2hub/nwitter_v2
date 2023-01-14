@@ -1,11 +1,22 @@
-from sqlalchemy import Column, TEXT, INT, BIGINT
+import datetime
+from sqlalchemy import DATETIME, Column, TEXT, INT, BIGINT
 from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
-class Test1(Base):
-    __tablename__ = "test1"
+class Usertbl(Base):
+    __tablename__ = "usertbl"
 
-    id = Column(BIGINT, nullable=False, autoincrement=True, primary_key=True)
-    name = Column(TEXT, nullable=False)
-    age = Column(INT, nullable=False)
+    user_id = Column(TEXT, nullable=False, primary_key=True)
+    user_password = Column(TEXT, nullable=False)
+    user_displayname = Column(TEXT, nullable=True)
+
+class Nweettbl(Base):
+    __tablename__ = "nweettbl"
+
+    nweet_num = Column(INT, nullable=False, primary_key=True, autoincrement=True)
+    nweet_text = Column(TEXT, nullable=False)
+    user_id = Column(TEXT, nullable=False)
+    created_at = Column(DATETIME, default=datetime.datetime.utcnow)
+    attachment_url = Column(TEXT, nullable=True)
+    like_it = Column(INT, default=0)

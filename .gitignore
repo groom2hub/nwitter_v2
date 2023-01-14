@@ -1,3 +1,5 @@
 __pychache__
 fastaip-env
 .DS_Store
+node_modules
+.env
