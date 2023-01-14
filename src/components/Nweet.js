@@ -8,18 +8,17 @@ import { faHeart as regular_faHeart } from "@fortawesome/free-regular-svg-icons"
 
 const Nweet = ({ nweetObj, isOwner }) => {
     const [editing, setEditing] = useState(false);
-    const [newNweet, setNewNweet] = useState(nweetObj.text);
-    const [likeIt, setLikeIt] = useState(nweetObj.likeIt);
+    const [newNweet, setNewNweet] = useState(nweetObj.nweet_text);
+    const [likeIt, setLikeIt] = useState(nweetObj.like_it);
+
+    console.log("nweetObj", nweetObj)
+    console.log("isOwner", isOwner)
 
     // Delete Nweet, attachment
     const onDeleteClick = async () => {
         const ok = window.confirm("삭제하시겠습니까?");
         if (ok) {
-            deleteDoc(doc(dbService, "nweets", nweetObj.id));
-            if (nweetObj.attachmentUrl !== ""){
-                const deleteRef = ref(storageService, nweetObj.attachmentUrl);
-                deleteObject(deleteRef).then();
-            }
+            await fetch(`http://localhost:8000/delnweet/${nweetObj.nweet_num}`);
         }
     };
 
@@ -36,33 +35,31 @@ const Nweet = ({ nweetObj, isOwner }) => {
     //Edit Nweet 입력값 반영
     const onSubmit = async (event) => {
         event.preventDefault();
-        updateDoc(doc(dbService, "nweets", nweetObj.id), { text: newNweet });
+        await fetch(`http://localhost:8000/updatenweet/${nweetObj.nweet_num}/${newNweet}`);
         setEditing(false);
     };
 
     // 좋아요
     const onlikeItClick = async () => {
-        if (nweetObj.creatorId !== isOwner.uid) {
-            if (nweetObj.likeItuserId.includes(isOwner.uid)) {
-                const likeItCancel = window.confirm("좋아요를 취소하겠습니까?");
-                if (likeItCancel) {
-                    await updateDoc(doc(dbService, "nweets", nweetObj.id), { likeIt: nweetObj.likeIt - 1 });
-                    await updateDoc(doc(dbService, "nweets", nweetObj.id), { likeItuserId: arrayRemove(isOwner.uid) });
-                    window.alert("좋아요가 취소되었습니다.");
-                }
-            } else {
-                const likeItOk = window.confirm("좋아요를 누르시겠습니까?");
-                if (likeItOk) {
-                    await updateDoc(doc(dbService, "nweets", nweetObj.id), { likeIt: nweetObj.likeIt + 1 });
-                    await updateDoc(doc(dbService, "nweets", nweetObj.id), { likeItuserId: arrayUnion(isOwner.uid) });
-                    window.alert("좋아요");
-                }
+        if (nweetObj.user_id !== isOwner.uid) {
+            // if (nweetObj.likeItuserId.includes(isOwner.uid)) {
+            //     const likeItCancel = window.confirm("좋아요를 취소하겠습니까?");
+            //     if (likeItCancel) {
+            //         await updateDoc(doc(dbService, "nweets", nweetObj.id), { likeIt: nweetObj.likeIt - 1 });
+            //         await updateDoc(doc(dbService, "nweets", nweetObj.id), { likeItuserId: arrayRemove(isOwner.uid) });
+            //         window.alert("좋아요가 취소되었습니다.");
+            //     }
+            // } else {
+            const likeItOk = window.confirm("좋아요를 누르시겠습니까?");
+            if (likeItOk) {
+                await fetch(`http://localhost:8000/likenweet/${nweetObj.nweet_num}`);
+                window.alert("좋아요");
+                window.location.reload();
             }
-            setLikeIt(0)
+            // }
         } else {
             window.alert("자신의 트윗에 좋아요를 누를 수 없습니다.");
         }
-        console.log(nweetObj.likeItuserId);
     };
 
     return(
@@ -88,19 +85,12 @@ const Nweet = ({ nweetObj, isOwner }) => {
             ) : (
                 <>
                     {/*Display Nweet, attachment*/}
-                    <h1>{nweetObj.displayName}</h1>
-                    <h4>{nweetObj.text}</h4>
-                    {nweetObj.attachmentUrl && (
-                        <img src={nweetObj.attachmentUrl} width="50px" height="50px" />
-                    )}
-                    { (nweetObj.creatorId === isOwner.uid && (
+                    <h1>{nweetObj.user_displayname}</h1>
+                    <h4>{nweetObj.nweet_text}</h4>
+                    { (nweetObj.user_id === isOwner.uid && (
                         <div className="nweet__actions">
                             <span onClick={onlikeItClick} >
-                                { (nweetObj.likeItuserId.includes(isOwner.uid)) 
-                                    ? ( <FontAwesomeIcon icon={faHeart} />  )
-                                    : ( <FontAwesomeIcon icon={regular_faHeart} />  ) 
-                                }
-                                {" "} {nweetObj.likeIt}
+                                {" "} {nweetObj.like_it}
                             </span>
                             <span onClick={onDeleteClick} >
                                 <FontAwesomeIcon icon={faTrash} />
@@ -110,14 +100,9 @@ const Nweet = ({ nweetObj, isOwner }) => {
                             </span>
                         </div>
                     )) || (
-                        // 자신의 nweet일때 좋아요 불가
                         <div className="nweet__actions">
                             <span onClick={onlikeItClick} >
-                                { (nweetObj.likeItuserId.includes(isOwner.uid)) 
-                                    ? ( <FontAwesomeIcon icon={faHeart} /> )
-                                    : ( <FontAwesomeIcon icon={regular_faHeart} /> ) 
-                                }
-                                {" "} {nweetObj.likeIt}
+                                {" "} {nweetObj.like_it}
                             </span>
                         </div>
                     )}

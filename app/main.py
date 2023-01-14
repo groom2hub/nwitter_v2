@@ -35,6 +35,11 @@ async def curUser_get(currentUserId):
     example = session.query(Usertbl).filter_by(user_id=currentUserId).first()
     return example
 
+@app.get("/nweettbl")
+async def first_get():
+    example = session.query(Nweettbl).all()
+    return example
+
 @app.get("/addnweet/{text}/{creatorId}/{displayName}")
 async def add_nweet(text, creatorId, displayName):
     try:
@@ -48,7 +53,46 @@ async def add_nweet(text, creatorId, displayName):
         return False
     finally:
         session.close()
+
+@app.get("/delnweet/{nweet_num}")
+async def del_nweet(nweet_num):
+    try:
+        select_nweet = session.query(Nweettbl).filter_by(nweet_num=nweet_num).first()
+        session.delete(select_nweet)
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        raise
         return False
+    finally:
+        session.close()
+
+@app.get("/updatenweet/{nweet_num}/{newNweet}")
+async def update_nweet(nweet_num, newNweet):
+    try:
+        session.query(Nweettbl).filter_by(nweet_num = nweet_num).update({Nweettbl.nweet_text: newNweet})
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        raise
+        return False
+    finally:
+        session.close()
+
+@app.get("/likenweet/{nweet_num}/")
+async def update_nweet(nweet_num):
+    try:
+        session.query(Nweettbl).filter_by(nweet_num = nweet_num).update({Nweettbl.like_it: Nweettbl.like_it+1})
+        session.commit()
+        return True
+    except:
+        session.rollback()
+        raise
+        return False
+    finally:
+        session.close()
 
 # Login
 @app.get("/login/{id}/{password}")
@@ -86,6 +130,5 @@ def signup(id, password):
             return False
         finally:
             session.close()
-            return False
     
     
